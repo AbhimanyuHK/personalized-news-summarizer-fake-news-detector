@@ -1,6 +1,6 @@
 # Personalized News Summarizer & Fake News Detector
 
-An end-to-end NLP application that fetches online news articles, summarizes them using transformer models, and detects fake news using a trained classifier. Built using **Streamlit** for the frontend and **scikit-learn + spaCy** for NLP-based fake news detection.
+An end-to-end NLP application that fetches online news articles, summarizes them using transformer models, and detects fake news using a **BERT-based classifier**. Built using **Streamlit** for the frontend and **HuggingFace Transformers** for both summarization and classification.
 
 ---
 
@@ -9,10 +9,10 @@ An end-to-end NLP application that fetches online news articles, summarizes them
 ```
 personalized-news-summarizer-fake-news-detector/
 ├── app.py                      # Streamlit app
-├── train_nlp_classifier.py     # Train and save fake news classifier (.pkl)
+├── train_bert_classifier.py    # Fine-tune and save BERT fake news classifier
 ├── requirements.txt            # Python dependencies
 ├── models/
-│   └── fake_news_classifier.pkl
+│   └── bert_fake_news_model/   # Saved BERT model directory
 ├── data/                       # Raw data: Fake.csv, True.csv
 ├── utils/
 │   ├── summarizer.py
@@ -31,13 +31,13 @@ personalized-news-summarizer-fake-news-detector/
 * `User Preferences` (topics)
 * `News Fetcher` (NewsAPI)
 * `Summarizer` (transformers - BART/T5)
-* `Fake News Classifier` (spaCy + TF-IDF + LogisticRegression)
+* `Fake News Classifier` (BERT-based fine-tuned model)
 * `Streamlit UI`
 
 **Flow:**
 
 ```
-User Input → Fetch News → Filter by Topics → Summarize → Classify → Show in UI
+User Input → Fetch News → Filter by Topics → Summarize → BERT Classification → Show in UI
 ```
 
 ---
@@ -55,16 +55,21 @@ cd personalized-news-summarizer-fake-news-detector
 
 ```bash
 pip install -r requirements.txt
-python -m spacy download en_core_web_sm
 ```
 
-### 3. Train the Classifier (once)
+### 3. Train or Load the BERT Classifier
+
+If using pre-trained model:
 
 ```bash
-python train_nlp_classifier.py
+# Ensure models/bert_fake_news_model/ contains config.json, pytorch_model.bin, tokenizer
 ```
 
-This creates `models/fake_news_classifier.pkl`
+To train your own:
+
+```bash
+python train_bert_classifier.py
+```
 
 ---
 
@@ -84,7 +89,7 @@ streamlit run app.py
 
    * ✅ Title
    * ✂️ Summary (BART)
-   * 📊 Credibility Score (% Real)
+   * 📊 Credibility Score (based on BERT)
 
 ---
 
@@ -96,23 +101,22 @@ streamlit run app.py
 2. Go to [https://share.streamlit.io](https://share.streamlit.io)
 3. Connect your repo → Select `app.py`
 
-### Deploy to Heroku (Optional)
+### Deploy to HuggingFace Space (Optional)
 
-1. Add `Procfile`, `setup.sh`
-2. Use `gunicorn` for backend + Streamlit
+1. Upload model to HuggingFace Hub
+2. Use `pipeline()` with model path
 
 ---
 
 ## 🧪 Model Lifecycle
 
-| Stage           | Description                            |
-| --------------- | -------------------------------------- |
-| Data Collection | Use Fake.csv / True.csv                |
-| Preprocessing   | spaCy: lemmatization, stopword removal |
-| Feature Extract | TF-IDF (1-2 grams)                     |
-| Classifier      | Logistic Regression (liblinear)        |
-| Save            | `.pkl` with `joblib`                   |
-| Load in App     | `classifier.py` module                 |
+| Stage           | Description                             |
+| --------------- | --------------------------------------- |
+| Data Collection | Use Fake.csv / True.csv                 |
+| Tokenization    | BERT tokenizer from HuggingFace         |
+| Fine-tuning     | BERT base model + binary classification |
+| Save Model      | HuggingFace model.save\_pretrained()    |
+| Load in App     | via `pipeline('text-classification')`   |
 
 ---
 
@@ -121,10 +125,10 @@ streamlit run app.py
 | Layer      | Technology               |
 | ---------- | ------------------------ |
 | Frontend   | Streamlit                |
-| NLP        | spaCy, scikit-learn      |
-| Summarizer | HuggingFace Transformers |
-| Model Save | `joblib`, `.pkl` format  |
-| Hosting    | Streamlit Cloud / Heroku |
+| NLP        | HuggingFace Transformers |
+| Summarizer | BART / T5                |
+| Classifier | BERT fine-tuned          |
+| Hosting    | Streamlit Cloud / HF Hub |
 
 ---
 
@@ -133,7 +137,7 @@ streamlit run app.py
 ```
 Title: Govt announces new AI policy
 Summary: The Indian government introduced a comprehensive AI policy...
-Credibility Score: 92%
+Credibility Score: 96%
 Sentiment: Neutral
 ```
 
@@ -141,10 +145,10 @@ Sentiment: Neutral
 
 ## ✨ Future Enhancements
 
-* BERT/RoBERTa-based fake news classifier (via HuggingFace)
-* Multilingual summarization
+* DistilBERT for faster classification
+* Fact-checking via web scraping or Wikipedia
 * Browser extension integration
-* Real-time news alerts
+* Re-ranking based on user feedback
 
 ---
 
