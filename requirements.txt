@@ -1,0 +1,23 @@
+# Core
+streamlit==1.37.0
+requests==2.32.3
+
+# Data handling
+pandas==2.2.2
+numpy==1.26.4
+
+# NLP & Transformers
+transformers==4.44.2
+torch==2.3.1
+sentencepiece==0.2.0
+scikit-learn==1.5.1
+
+# Visualization
+matplotlib==3.9.2
+
+# Optional (for training & metrics)
+datasets==2.20.0
+tqdm==4.66.5
+evaluate==0.4.2
+hf_xet
+accelerate>=0.21.0
