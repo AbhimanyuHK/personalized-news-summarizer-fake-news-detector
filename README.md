@@ -47,7 +47,7 @@ User Input → Fetch News → Filter by Topics → Summarize → BERT Classifica
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/personalized-news-summarizer-fake-news-detector
+git clone https://github.com/AbhimanyuHK/personalized-news-summarizer-fake-news-detector
 cd personalized-news-summarizer-fake-news-detector
 ```
 
@@ -118,7 +118,11 @@ streamlit run app.py
 | Save Model      | HuggingFace model.save\_pretrained()    |
 | Load in App     | via `pipeline('text-classification')`   |
 
+
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/f51c049a-9b51-4bdd-8cbd-1eed4f58dc56" />
+
 ---
+
 
 ## 🤖 Tech Stack
 
